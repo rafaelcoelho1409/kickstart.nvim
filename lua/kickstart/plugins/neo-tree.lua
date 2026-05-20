@@ -14,12 +14,27 @@ end
 vim.pack.add(plugins)
 
 vim.keymap.set('n', '\\', '<Cmd>Neotree reveal<CR>', { desc = 'NeoTree reveal', silent = true })
+vim.keymap.set('n', '<leader>e', '<Cmd>Neotree toggle<CR>', { desc = '[E]xplorer toggle (NeoTree)', silent = true })
 
 require('neo-tree').setup {
+  close_if_last_window = true, -- don't leave the tree as the only open window
+  enable_git_status = true, -- git symbols in the tree (like VSCode)
+  enable_diagnostics = true, -- LSP diagnostics shown on files/folders
+  window = {
+    position = 'left', -- persistent left sidebar
+    width = 32,
+  },
   filesystem = {
+    follow_current_file = { enabled = true, leave_dirs_open = true }, -- reveal/track the active file
+    use_libuv_file_watcher = true, -- auto-refresh when files change on disk (e.g. Claude Code edits)
+    filtered_items = {
+      hide_dotfiles = false, -- show .github/, .gitlab-ci.yml, etc.
+      hide_gitignored = true, -- hide .terraform/, etc. (press H in the tree to toggle)
+    },
     window = {
       mappings = {
         ['\\'] = 'close_window',
+        ['H'] = 'toggle_hidden',
       },
     },
   },

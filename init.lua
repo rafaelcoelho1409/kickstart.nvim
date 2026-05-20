@@ -681,6 +681,17 @@ do
     end,
   })
 
+  -- Detect Helm charts and docker-compose files so the right LSP attaches (plain yamlls otherwise)
+  vim.filetype.add {
+    pattern = {
+      ['.*/templates/.*%.ya?ml'] = 'helm',
+      ['.*/templates/.*%.tpl'] = 'helm',
+      ['.*/helmfile.*%.ya?ml'] = 'helm',
+      ['.*/[dD]ocker%-[cC]ompose.*%.ya?ml'] = 'yaml.docker-compose',
+      ['.*/compose.*%.ya?ml'] = 'yaml.docker-compose',
+    },
+  }
+
   -- Enable the following language servers
   --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
   --  See `:help lsp-config` for information about keys and how to configure
@@ -698,6 +709,34 @@ do
     -- ts_ls = {},
 
     stylua = {}, -- Used to format Lua code
+
+    -- Python
+    basedpyright = {}, -- types, completion, go-to-def, hover
+    ruff = {}, -- fast lint + format + code actions
+
+    -- OpenTofu / Terraform (.tf files)
+    tofu_ls = {},
+
+    -- Helm charts
+    helm_ls = {},
+
+    -- Kubernetes manifests (YAML)
+    yamlls = {
+      settings = {
+        yaml = {
+          schemas = {
+            -- "kubernetes" keyword = bundled k8s schema, no URL needed
+            kubernetes = { 'k8s/**/*.yaml', 'manifests/**/*.yaml', '*.k8s.yaml' },
+          },
+          validate = true,
+          keyOrdering = false, -- stop yamlls nagging about key order
+        },
+      },
+    },
+
+    -- Docker
+    dockerls = {}, -- Dockerfiles
+    docker_compose_language_service = {}, -- compose.yaml
 
     -- Special Lua Config, as recommended by neovim help docs
     lua_ls = {
@@ -964,7 +1003,7 @@ do
   -- require 'kickstart.plugins.indent_line'
   -- require 'kickstart.plugins.lint'
   -- require 'kickstart.plugins.autopairs'
-  -- require 'kickstart.plugins.neo-tree'
+  require 'kickstart.plugins.neo-tree'
   -- require 'kickstart.plugins.gitsigns' -- adds gitsigns recommended keymaps
 
   -- NOTE: You can add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
